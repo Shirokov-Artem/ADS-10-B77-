@@ -8,25 +8,25 @@
 class Tree {
  private:
     struct Node {
-        char ch;
-        std::vector<Node*> children;
+        char data;
+        std::vector<Node*> childNodes;
     };
     std::vector<std::vector<char>> permutations;
     Node* root;
-    void createTree(Node* node, std::vector<char> chars) {
+    void buildTree(Node* node, std::vector<char> chars) {
         if (chars.empty()) {
             return;
         }
-        node->children.push_back(new Node{chars[0]});
-        createTree(node->children.back(), {chars.begin() + 1, chars.end()});
+        node->childNodes.push_back(new Node{chars[0]});
+        buildTree(node->childNodes.back(), {chars.begin() + 1, chars.end()});
     }
     std::vector<char> traverse(Node* node, std::vector<char> prevChars) {
-        prevChars.push_back(node->ch);
-        if (node->children.empty()) {
+        prevChars.push_back(node->data);
+        if (node->childNodes.empty()) {
             return prevChars;
         }
-        for (auto child : node->children) {
-            permutations.push_back(traverse(child, prevChars));
+        for (auto childNode : node->childNodes) {
+            permutations.push_back(traverse(childNode, prevChars));
         }
         return prevChars;
     }
@@ -34,12 +34,12 @@ class Tree {
  public:
     explicit Tree(std::vector<char> chars) {
         root = new Node{chars[0]};
-        createTree(root, {chars.begin() + 1, chars.end()});
+        buildTree(root, {chars.begin() + 1, chars.end()});
         std::vector<char> tmp;
         traverse(root, tmp);
     }
     std::vector<char> getPermutation(int n) const {
-        if (permutations.size() < n || n < 1) {
+        if (n < 1 || permutations.size() < n) {
             return std::vector<char>();
         }
         return permutations[n - 1];
