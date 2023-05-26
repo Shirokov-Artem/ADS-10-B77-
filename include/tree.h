@@ -33,12 +33,12 @@ class Tree {
         nodes.push(root);
         for (auto i : elements) {
             bool nodeFound = false;
-            while (!nodes.top()->children.empty()) {
-                if (nodes.top()->data == i) {
+            for (auto child : nodes.top()->children) {
+                if (child->data == i) {
+                    nodes.push(child);
                     nodeFound = true;
                     break;
                 }
-                nodes.pop();
             }
             if (!nodeFound) {
                 Node* newNode = new Node{i, {}};
