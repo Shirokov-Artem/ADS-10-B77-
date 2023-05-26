@@ -13,7 +13,7 @@ class Tree {
         std::vector<Node*> children;
     };
     Node* root;
-    std::vector<std::vector<char>> permutations;
+    mutable std::vector<std::vector<char>> permutations;
     void generatePermutations(Node* node, std::vector<char> currentPerm) const {
         currentPerm.push_back(node->data);
         if (node->children.empty()) {
