@@ -14,7 +14,7 @@ class Tree {
     };
     Node* root;
     mutable std::vector<std::vector<char>> permutations;
-    void generatePermutations(Node* node, std::vector<char> currentPerm) const {
+    void generatePermutations(Node* node, std::vector<char> currentPerm) {
         currentPerm.push_back(node->data);
         if (node->children.empty()) {
             permutations.push_back(currentPerm);
@@ -45,7 +45,7 @@ class Tree {
         deleteSubtree(root);
     }
     std::vector<char> getPerm(int n) const {
-        if (n < 1 || n > permutations.size()) {
+        if (n <= 0 || n > permutations.size()) {
             return std::vector<char>{};
         }
         return permutations[n - 1];
