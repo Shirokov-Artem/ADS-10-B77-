@@ -8,5 +8,5 @@
 #include  "tree.h"
 
 std::vector<char> getPerm(const Tree& tree, int n) {
-    return tree.getPerm(n);
+    return tree.permutations[n - 1];
 }
