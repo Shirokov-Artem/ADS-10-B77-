@@ -6,19 +6,18 @@
 #include <algorithm>
 
 class TreeNode {
-
  public:
     char val;
     std::vector<TreeNode*> children;
-    TreeNode(char c) : val(c), children() {}
+
+    explicit TreeNode(char c) : val(c), children() {}
 };
 
 class Tree {
-
  private:
     std::vector<std::vector<char>> permutations;
     TreeNode* root;
-    TreeNode* buildTreeHelper(std::vector<char>& chars) {
+    TreeNode* buildTreeHelper(const std::vector<char>& chars) {
         if (chars.empty()) {
             return nullptr;
         }
@@ -45,7 +44,7 @@ class Tree {
     }
 
  public:
-    Tree(std::vector<char>& chars) : permutations(), root(nullptr) {
+    explicit Tree(const std::vector<char>& chars) : permutations(), root(nullptr) {
         root = buildTreeHelper(chars);
         std::vector<char> path;
         getPermutationHelper(root, path);
