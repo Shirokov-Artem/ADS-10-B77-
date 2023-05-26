@@ -5,44 +5,56 @@
 #include <vector>
 #include <algorithm>
 
+class TreeNode {
+
+ public:
+    char val;
+    std::vector<TreeNode*> children;
+    TreeNode(char c) : val(c), children() {}
+};
+
 class Tree {
+
  private:
-    struct Node {
-        char data;
-        std::vector<Node*> childNodes;
-    };
     std::vector<std::vector<char>> permutations;
-    Node* root;
-    void buildTree(Node* node, std::vector<char> chars) {
+    TreeNode* root;
+    TreeNode* buildTreeHelper(std::vector<char>& chars) {
         if (chars.empty()) {
-            return;
+            return nullptr;
         }
-        node->childNodes.push_back(new Node{chars[0]});
-        buildTree(node->childNodes.back(), {chars.begin() + 1, chars.end()});
+        TreeNode* node = new TreeNode(chars[0]);
+        for (int i = 1; i < chars.size(); ++i) {
+            std::vector<char> subChars = chars;
+            subChars.erase(subChars.begin());
+
+            TreeNode* child = buildTreeHelper(subChars);
+            node->children.push_back(child);
+        }
+        return node;
     }
-    std::vector<char> traverse(Node* node, std::vector<char> prevChars) {
-        prevChars.push_back(node->data);
-        if (node->childNodes.empty()) {
-            return prevChars;
+    void getPermutationHelper(TreeNode* node, std::vector<char>& path) {
+        path.push_back(node->val);
+        if (node->children.empty()) {
+            permutations.push_back(path);
+        } else {
+            for (TreeNode* child : node->children) {
+                getPermutationHelper(child, path);
+            }
         }
-        for (auto childNode : node->childNodes) {
-            permutations.push_back(traverse(childNode, prevChars));
-        }
-        return prevChars;
+        path.pop_back();
     }
 
  public:
-    explicit Tree(std::vector<char> chars) {
-        root = new Node{chars[0]};
-        buildTree(root, {chars.begin() + 1, chars.end()});
-        std::vector<char> tmp;
-        traverse(root, tmp);
+    Tree(std::vector<char>& chars) : permutations(), root(nullptr) {
+        root = buildTreeHelper(chars);
+        std::vector<char> path;
+        getPermutationHelper(root, path);
     }
     std::vector<char> getPermutation(int n) const {
-        if (n < 1 || permutations.size() < n) {
+        if (permutations.size() <= n) {
             return std::vector<char>();
         }
-        return permutations[n - 1];
+        return permutations[n];
     }
 };
 
