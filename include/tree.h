@@ -4,26 +4,22 @@
 
 #include <vector>
 #include <algorithm>
-#include <unordered_map>
 
 class Tree {
  public:
-    Tree(const std::vector<char>& input) {
+    explicit Tree(const std::vector<char>& elements) {
         root = new Node;
-        for (char c : input) {
-            Node* child = new Node;
-            child->val = c;
+        for (const char& element : elements) {
+            Node* child = new Node{element};
             root->children.push_back(child);
         }
-        buildTree(input, root->children);
+        buildPermutations(root);
     }
-    std::vector<char> getPerm(int n) {
-        std::vector<char> permutation;
-        findPermutation(root, permutation, n);
-        return permutation;
+    std::vector<char> getPerm(int n) const {
+        return permutations[n - 1];
     }
     ~Tree() {
-        deleteTree(root);
+        clearTree(root);
     }
 
  private:
@@ -33,49 +29,28 @@ class Tree {
         Node() {}
         Node(char v) : val(v) {}
     };
-    Node* root;
-    void buildTree(std::vector<char> input, std::vector<Node*>& children) {
-        if (input.empty()) {
-            return;
-        }
-        for (Node* child : children) {
-            std::vector<char> newInput(input);
-            newInput.erase(std::remove(newInput.begin(), newInput.end(), child->val), newInput.end());
-            buildTree(newInput, child->children);
-        }
-    }
-    void findPermutation(Node* node, std::vector<char>& permutation, int& n) {
-        if (node) {
-            for (Node* child : node->children) {
-                int numPerms = countPermutations(child);
-                if (n <= numPerms) {
-                    permutation.push_back(child->val);
-                    findPermutation(child, permutation, n);
-                    break;
-                }
-                n -= numPerms;
-            }
-        }
-    }
-    int countPermutations(Node* node) {
+    Node* root = nullptr;
+    std::vector<std::vector<char>> permutations{};
+    void buildPermutations(Node* node) {
         if (node->children.empty()) {
-            return 1;
-        }
-        int count = 0;
-        for (Node* child : node->children) {
-            count += countPermutations(child);
-        }
-        return count;
-    }
-    void deleteTree(Node* node) {
-        if (!node) {
+            std::vector<char> perm{};
+            while (node) {
+                perm.push_back(node->val);
+                node = node->parent;
+            }
+            permutations.push_back(perm);
             return;
         }
         for (Node* child : node->children) {
-            deleteTree(child);
+            child->parent = node;
+            buildPermutations(child);
+        }
+    }
+    void clearTree(Node* node) {
+        for (Node* child : node->children) {
+            clearTree(child);
             delete child;
         }
     }
 };
-
 #endif  // INCLUDE_TREE_H_
