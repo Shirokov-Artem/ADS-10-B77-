@@ -12,9 +12,9 @@ class Tree {
         char data;
         std::vector<Node*> children;
     };
-    Node* root;
+    Node* root = nullptr;
     mutable std::vector<std::vector<char>> permutations;
-    void generatePermutations(Node* node, std::vector<char> currentPerm) {
+    void generatePermutations(Node* node, std::vector<char> currentPerm) const {
         currentPerm.push_back(node->data);
         if (node->children.empty()) {
             permutations.push_back(currentPerm);
@@ -40,6 +40,7 @@ class Tree {
         }
         std::vector<char> currentPerm;
         generatePermutations(root, currentPerm);
+        std::sort(permutations.begin(), permutations.end());
     }
     ~Tree() {
         deleteSubtree(root);
