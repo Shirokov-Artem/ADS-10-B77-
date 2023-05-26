@@ -14,7 +14,7 @@ class Tree {
     };
     Node* root;
     std::vector<std::vector<char>> permutations;
-    void generatePermutations(Node* node, std::vector<char> currentPerm) {
+    void generatePermutations(Node* node, std::vector<char> currentPerm) const {
         currentPerm.push_back(node->data);
         if (node->children.empty()) {
             permutations.push_back(currentPerm);
@@ -26,7 +26,7 @@ class Tree {
     }
 
  public:
-    Tree(std::vector<char>& elements) {
+    explicit Tree(const std::vector<char>& elements) {
         root = new Node{' ', {}};
         std::stack<Node*> nodes;
         nodes.push(root);
@@ -44,11 +44,10 @@ class Tree {
     ~Tree() {
         deleteSubtree(root);
     }
-    std::vector<char> getPerm(int n) {
+    std::vector<char> getPerm(int n) const {
         if (n < 1 || n > permutations.size()) {
             return std::vector<char>{};
         }
-
         return permutations[n - 1];
     }
 
