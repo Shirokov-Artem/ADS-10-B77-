@@ -28,6 +28,9 @@ class Tree {
 
  public:
     explicit Tree(const std::vector<char>& elements) {
+        if (elements.empty()) {
+            return;
+        }
         root = new Node{' ', {}};
         std::stack<Node*> nodes;
         nodes.push(root);
@@ -51,7 +54,9 @@ class Tree {
         std::sort(permutations.begin(), permutations.end());
     }
     ~Tree() {
-        deleteSubtree(root);
+        if (root) {
+            deleteSubtree(root);
+        }
     }
     std::vector<char> getPerm(int n) const {
         if (n <= 0 || n > permutations.size()) {
