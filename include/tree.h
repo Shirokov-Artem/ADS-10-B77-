@@ -39,7 +39,7 @@ class Tree {
         traverse(root, tmp);
     }
     std::vector<char> getPermutation(int n) const {
-        if (permutations.size() < n) {
+        if (permutations.size() < n || n < 1) {
             return std::vector<char>();
         }
         return permutations[n - 1];
