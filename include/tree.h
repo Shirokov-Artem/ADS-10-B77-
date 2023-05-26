@@ -6,49 +6,44 @@
 #include <algorithm>
 
 class Tree {
- public:
-    Tree(std::vector<char> elements) {
-        root = new Node(' ');
-        std::vector<Node*> nodes;
-        for (auto i : elements) {
-            nodes.push_back(new Node(i));
+    private:
+        struct Node {
+            char symb;
+            std::vector<Node*> children;
+            Node(char ch) : symb(ch) {}
+        };
+        Node *root;
+        void createNode(Node* node, const std::vector<char>& vec) {
+            for (int i = 0; i < vec.size(); i++) {
+                std::vector<char> temp = vec;
+                node->children.push_back(new Node(temp[i]));
+                temp.erase(temp.begin() + i);
+                createNode(node->children.back(), temp);
+            }
         }
-        root->buildTree(&nodes);
-        root->generatePermutations(permutations, {});
-    }
-    std::vector<std::vector<char>> permutations;
 
- private:
-    class Node {
-
-     public:
-        Node(char value) : value(value) {}
-        void buildTree(std::vector<Node*>* nodes) {
-            for (auto it = nodes->begin(); it != nodes->end();) {
-                if ((*it)->value == value) {
-                    children.push_back(*it);
-                    it = nodes->erase(it);
-                } else {
-                    ++it;
-                }
-            }
-            for (auto& child : children) {
-                child->buildTree(nodes);
-            }
+    public:
+        Tree(const std::vector<char>& vec) {
+            root = new Node('*');
+            createNode(root, vec);
         }
-        void generatePermutations(std::vector<std::vector<char>>& permutations, std::vector<char> current) {
-            current.push_back(value);
-            if (children.empty()) {
-                permutations.push_back(current);
-            }
-            for (auto& child : children) {
-                child->generatePermutations(permutations, current);
-            }
+        ~Tree() {
+            clear(root);
         }
-        char value;
-        std::vector<Node*> children;
-    };
-    Node* root;
+        int getSize() const {
+            return root->children.size();
+        }
+        char getSymb() const {
+            return root->symb;
+        }
+        Node* getChild(int n) const {
+            return root->children[n];
+        }
+        void clear(Node *node) {
+            if (node == nullptr) return;
+            for (auto child : node->children) clear(child);
+            delete node;
+        }
 };
 
 #endif  // INCLUDE_TREE_H_
