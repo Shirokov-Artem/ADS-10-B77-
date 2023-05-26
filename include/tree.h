@@ -14,15 +14,16 @@ class Tree {
     };
     Node* root = nullptr;
     mutable std::vector<std::vector<char>> permutations;
-    void generatePermutations(Node* node, std::vector<char> currentPerm) const {
+    void generatePermutations(Node* node, std::vector<char>& currentPerm) const {
         currentPerm.push_back(node->data);
         if (node->children.empty()) {
             permutations.push_back(currentPerm);
-            return;
+        } else {
+            for (auto child : node->children) {
+                generatePermutations(child, currentPerm);
+            }
         }
-        for (auto child : node->children) {
-            generatePermutations(child, currentPerm);
-        }
+        currentPerm.pop_back();
     }
 
  public:
@@ -31,19 +32,28 @@ class Tree {
         std::stack<Node*> nodes;
         nodes.push(root);
         for (auto i : elements) {
-            while (!nodes.top()->children.empty() && nodes.top()->data != i) {
+            bool nodeFound = false;
+            while (!nodes.top()->children.empty()) {
+                if (nodes.top()->data == i) {
+                    nodeFound = true;
+                    break;
+                }
                 nodes.pop();
             }
-            Node* newNode = new Node{i, {}};
-            nodes.top()->children.push_back(newNode);
-            nodes.push(newNode);
+            if (!nodeFound) {
+                Node* newNode = new Node{i, {}};
+                nodes.top()->children.push_back(newNode);
+                nodes.push(newNode);
+            }
         }
         std::vector<char> currentPerm;
         generatePermutations(root, currentPerm);
         std::sort(permutations.begin(), permutations.end());
     }
     ~Tree() {
-        deleteSubtree(root);
+        if (root) {
+            deleteSubtree(root);
+        }
     }
     std::vector<char> getPerm(int n) const {
         if (n <= 0 || n > permutations.size()) {
