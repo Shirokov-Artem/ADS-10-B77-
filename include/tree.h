@@ -14,7 +14,8 @@ class Tree {
     };
     Node* root = nullptr;
     mutable std::vector<std::vector<char>> permutations;
-    void generatePermutations(Node* node, std::vector<char>& currentPerm) const {
+    void generatePermutations(Node* node, std::vector<char>&
+currentPerm) const {
         currentPerm.push_back(node->data);
         if (node->children.empty()) {
             permutations.push_back(currentPerm);
@@ -33,7 +34,7 @@ class Tree {
         nodes.push(root);
         for (auto i : elements) {
             bool nodeFound = false;
-            for (auto child : nodes.top()->children) {
+            for (auto& child : nodes.top()->children) {
                 if (child->data == i) {
                     nodes.push(child);
                     nodeFound = true;
@@ -51,7 +52,7 @@ class Tree {
         std::sort(permutations.begin(), permutations.end());
     }
     ~Tree() {
-        if (root) {
+        if (root != nullptr) {
             deleteSubtree(root);
         }
     }
