@@ -7,50 +7,48 @@
 
 class Tree {
  public:
-    explicit Tree(const std::vector<char>& elements) {
-        root = new Node;
-        for (const char& element : elements) {
-            Node* child = new Node{element};
-            root->children.push_back(child);
+    Tree(std::vector<char> elements) {
+        root = new Node(' ');
+        std::vector<Node*> nodes;
+        for (auto i : elements) {
+            nodes.push_back(new Node(i));
         }
-        buildPermutations(root);
+        root->buildTree(&nodes);
+        root->generatePermutations(permutations, {});
     }
-    std::vector<char> getPerm(int n) const {
-        return permutations[n - 1];
-    }
-    ~Tree() {
-        clearTree(root);
-    }
+    std::vector<std::vector<char>> permutations;
 
  private:
-    struct Node {
-        char val;
-        std::vector<Node*> children;
-        Node() {}
-        Node(char v) : val(v) {}
-    };
-    Node* root = nullptr;
-    std::vector<std::vector<char>> permutations{};
-    void buildPermutations(Node* node) {
-        if (node->children.empty()) {
-            std::vector<char> perm{};
-            while (node) {
-                perm.push_back(node->val);
-                node = node->parent;
+    class Node {
+
+     public:
+        Node(char value) : value(value) {}
+        void buildTree(std::vector<Node*>* nodes) {
+            for (auto it = nodes->begin(); it != nodes->end();) {
+                if ((*it)->value == value) {
+                    children.push_back(*it);
+                    it = nodes->erase(it);
+                } else {
+                    ++it;
+                }
             }
-            permutations.push_back(perm);
-            return;
+            for (auto& child : children) {
+                child->buildTree(nodes);
+            }
         }
-        for (Node* child : node->children) {
-            child->parent = node;
-            buildPermutations(child);
+        void generatePermutations(std::vector<std::vector<char>>& permutations, std::vector<char> current) {
+            current.push_back(value);
+            if (children.empty()) {
+                permutations.push_back(current);
+            }
+            for (auto& child : children) {
+                child->generatePermutations(permutations, current);
+            }
         }
-    }
-    void clearTree(Node* node) {
-        for (Node* child : node->children) {
-            clearTree(child);
-            delete child;
-        }
-    }
+        char value;
+        std::vector<Node*> children;
+    };
+    Node* root;
 };
+
 #endif  // INCLUDE_TREE_H_
