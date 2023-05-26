@@ -6,57 +6,43 @@
 #include <algorithm>
 
 class Tree {
+ private:
     struct Node {
-        char value;
+        char ch;
         std::vector<Node*> children;
-        Node(char value) : value(value) {}
-        ~Node() {
-            for (auto child : children) {
-                delete child;
-            }
-        }
     };
-    Node* root = nullptr;
-
- public:
-    explicit Tree(std::vector<char> values) {
-        root = new Node(' ');
-        for (auto value : values) {
-            root->children.push_back(new Node(value));
+    std::vector<std::vector<char>> permutations;
+    Node* root;
+    void createTree(Node* node, std::vector<char> chars) {
+        if (chars.empty()) {
+            return;
         }
-        build_tree(root->children, values);
+        node->children.push_back(new Node{chars[0]});
+        createTree(node->children.back(), {chars.begin() + 1, chars.end()});
     }
-    Node* get_root() const {
-        return root;
-    }
-    void generate_permutations(const Node* node, 
-std::vector<char> current_perm, 
-std::vector<std::vector<char>>& permutations) const {
-        current_perm.push_back(node->value);
+    std::vector<char> traverse(Node* node, std::vector<char> prevChars) {
+        prevChars.push_back(node->ch);
         if (node->children.empty()) {
-            permutations.push_back(current_perm);
+            return prevChars;
         }
         for (auto child : node->children) {
-            generate_permutations(child, current_perm, 
-permutations);
+            permutations.push_back(traverse(child, prevChars));
         }
+        return prevChars;
     }
 
- private:
-    void build_tree(std::vector<Node*>& current_nodes, 
-std::vector<char> remaining) {
-        for (auto node : current_nodes) {
-            auto iter = std::find(remaining.begin(), remaining.end(), 
-node->value);
-            if (iter != remaining.end()) {
-                remaining.erase(iter);
-                for (auto value : remaining) {
-                    node->children.push_back(new Node(value));
-                }
-                build_tree(node->children, remaining);
-                remaining.insert(iter, node->value);
-            }
+ public:
+    explicit Tree(std::vector<char> chars) {
+        root = new Node{chars[0]};
+        createTree(root, {chars.begin() + 1, chars.end()});
+        std::vector<char> tmp;
+        traverse(root, tmp);
+    }
+    std::vector<char> getPermutation(int n) const {
+        if (permutations.size() < n) {
+            return std::vector<char>();
         }
+        return permutations[n - 1];
     }
 };
 
