@@ -24,6 +24,10 @@ class Tree {
     char operator[](int n) const {
         return data[n];
     }
+
+    std::vector<char> getData() const {
+        return data;
+    }
 };
 
 #endif  // INCLUDE_TREE_H_
