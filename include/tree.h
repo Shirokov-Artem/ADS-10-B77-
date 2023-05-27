@@ -6,44 +6,24 @@
 #include <algorithm>
 
 class Tree {
-    private:
-        struct Node {
-            char symb;
-            std::vector<Node*> children;
-            Node(char ch) : symb(ch) {}
-        };
-        Node *root;
-        void createNode(Node* node, const std::vector<char>& vec) {
-            for (int i = 0; i < vec.size(); i++) {
-                std::vector<char> temp = vec;
-                node->children.push_back(new Node(temp[i]));
-                temp.erase(temp.begin() + i);
-                createNode(node->children.back(), temp);
-            }
-        }
+ private:
+    std::vector<char> data;
+    int size;
 
-    public:
-        Tree(const std::vector<char>& vec) {
-            root = new Node('*');
-            createNode(root, vec);
-        }
-        ~Tree() {
-            clear(root);
-        }
-        int getSize() const {
-            return root->children.size();
-        }
-        char getSymb() const {
-            return root->symb;
-        }
-        Node* getChild(int n) const {
-            return root->children[n];
-        }
-        void clear(Node *node) {
-            if (node == nullptr) return;
-            for (auto child : node->children) clear(child);
-            delete node;
-        }
+ public:
+    explicit Tree(const std::vector<char>& vec) : data(vec), size(vec.size()) {}
+
+    int getSize() const {
+        return size;
+    }
+
+    char getSymb() const {
+        return '*';
+    }
+
+    char operator[](int n) const {
+        return data[n];
+    }
 };
 
 #endif  // INCLUDE_TREE_H_
