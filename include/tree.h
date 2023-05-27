@@ -5,66 +5,67 @@
 #include <vector>
 #include <algorithm>
 
-class Tree {
- private:
-    struct Node {
-        char value;
-        std::vector<Node*> children;
-        Node(char val) : value(val) {}
-        ~Node() {
-            for (auto child : children) {
-                delete child;
-            }
-        }
-    };
-
-    std::vector<char> elements;
-    std::vector<std::vector<char>> permutations;
-    Node* root;
-
-    void fillNode(Node* node, std::vector<char> values) {
-        values.erase(std::remove(values.begin(), values.end(),
-                                 node->value), values.end());
-        for (auto value : values) {
-            node->children.push_back(new Node(value));
-        }
-        for (auto child : node->children) {
-            fillNode(child, values);
-        }
-    }
-
-    void generatePermutations(Node* node, std::vector<char> permutation) {
-        if (node->children.empty()) {
-            permutation.push_back(node->value);
-            permutations.push_back(permutation);
-            permutation.pop_back();
-        }
-        else {
-            permutation.push_back(node->value);
-            for (auto child : node->children) {
-                generatePermutations(child, permutation);
-            }
-            permutation.pop_back();
-        }
-    }
-
+class Node {
  public:
-    Tree(const std::vector<char>& input) : elements(input), root(new Node(' ')) {
-        for (auto value : elements) {
-            root->children.push_back(new Node(value));
-        }
-        for (auto child : root->children) {
-            fillNode(child, elements);
-            generatePermutations(child, std::vector<char>());
-        }
-    }
+  explicit Node(char val) : value(val) {}
 
-    ~Tree() {
-        delete root;
-    }
-
-    friend std::vector<char> getPerm(const Tree& tree, int n);
+  char value = ' ';
+  std::vector<Node*> children;
 };
 
+class Tree {
+ public:
+  explicit Tree(const std::vector<char>& input) : elements(input), root(new Node(' ')) {
+    for (char el : input) {
+      insert(el);
+    }
+  }
+
+  ~Tree() {
+    remove(root);
+  }
+
+  bool search(const std::string& word) const {
+    Node* current = root;
+    for (char c : word) {
+      bool found = false;
+      for (Node* child : current->children) {
+        if (child->value == c) {
+          current = child;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+ private:
+  void insert(char val) {
+    Node* current = root;
+    for (Node* child : current->children) {
+      if (child->value == val) {
+        current = child;
+        return;
+      }
+    }
+    Node* new_node = new Node(val);
+    current->children.push_back(new_node);
+    current = new_node;
+  }
+
+  void remove(Node* node) {
+    for (Node* child : node->children) {
+      remove(child);
+    }
+    delete node;
+  }
+
+  const std::vector<char> elements;
+  Node* root;
+};
 
 #endif  // INCLUDE_TREE_H_
