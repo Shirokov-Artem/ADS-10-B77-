@@ -11,9 +11,9 @@ int main() {
   Tree tree(in);
 
   // запрашиваем первую перестановку
-  std::vector<char> result1 = getPerm(tree, 1, data);  //  123
+  std::vector<char> result1 = getPerm(tree, 1, tree.getData();  //  123
 
   // запрашиваем вторую перестановку
-  std::vector<char> result2 = getPerm(tree, 2, data);  //  132
+  std::vector<char> result2 = getPerm(tree, 2, tree.getData());  //  132
   return 0;
 }
