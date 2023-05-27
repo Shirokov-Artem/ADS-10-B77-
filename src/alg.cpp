@@ -13,11 +13,10 @@ int fact(int n) {
     return result;
 }
 
-std::vector<char> getPerm(const Tree& tree, int n) {
+std::vector<char> getPerm(const Tree& tree, int n, const std::vector<char>& data) {
     if (n <= 0 || n > fact(tree.getSize()))
         return {};
 
-    std::vector<char> data = tree.getPerm();
     std::vector<int> perm(tree.getSize());
     for (int i = 0; i < tree.getSize(); i++) {
         perm[i] = i;
